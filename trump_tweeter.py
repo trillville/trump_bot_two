@@ -48,8 +48,20 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
         generated += next_char
         sentence_trunc = sentence_trunc[1:] + next_char
 
-    generated = re.sub("`|~", "", generated)
-    return generated[-CHARACTER_LIMIT:]
+    # Get rid of end of tweet/start of tweet char, and break links so twitter doesnt complain
+    generated = re.sub("`|~", "", generated).replace('://', ':/')
+    if len(generated) >= CHARACTER_LIMIT - 1:
+        return split_tweet(generated)
+    else:
+        return [generated]
+
+def split_tweet(tweet_text):
+    out = []
+    while len(tweet_text) >= (CHARACTER_LIMIT - 3):
+        out.append(tweet_text[0:CHARACTER_LIMIT - 3] + "...")
+        tweet_text = tweet_text[CHARACTER_LIMIT - 3:]
+    out.append("..." + tweet_text)
+    return out
 
 def get_new_tweets(conn, api):
     cur = conn.cursor()
@@ -90,10 +102,11 @@ def main():
 
     # Generate tweet
     tweet_formatted = preprocess_input_tweet(latest_tweet)
-    output_tweet = generate_output_tweet(model, tweet_formatted, char_indices, indices_char)
+    output_tweets = generate_output_tweet(model, tweet_formatted, char_indices, indices_char)
 
     # Post tweet
-    api.PostUpdate(output_tweet)
+    for tweet in output_tweets:
+        api.PostUpdate(tweet)
 
 if __name__ == "__main__":
     main()
