@@ -46,6 +46,8 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
 
         generated += next_char
         sentence_trunc = sentence_trunc[1:] + next_char
+        
+    generated = re.sub("`|~", "", generated)
     return(generated)
 
 def get_new_tweets(conn, api):
