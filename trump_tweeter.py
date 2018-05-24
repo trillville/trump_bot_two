@@ -57,10 +57,10 @@ def main():
     # Static tweet for testing
     tweet_text = "California finally deserves a great Governor one who understands borders crime and lowering taxes. John Cox is the man - he’ll be the best Governor you’ve ever had. I fully endorse John Cox for Governor and look forward to working with him to Make California Great Again!"
 
-    api = twitter.Api(consumer_key='biZ0AS0JnEvMaG4iQFmtT78bZ',
-                      consumer_secret='1znTvAD8baeKp0escN37ZnxGUqudxA1ukwZSz9mBAbh9io6wPd',
-                      access_token_key='999491256307728390-ELrLWW8Juhz0V7yZfgXUPI9CLSVLmoq',
-                      access_token_secret='ppRXEnpP01kg1unqIdAeJZjT9tEZKlwgSmJJny2iW3x88')
+    api = twitter.Api(consumer_key=os.environ.get('CONSUMER_KEY'),
+                      consumer_secret=os.environ.get('CONSUMER_KEY_SECRET'),
+                      access_token_key=os.environ.get('ACCESS_TOKEN'),
+                      access_token_secret=os.environ.get('ACCESS_TOKEN_SECRET'))
 
     # Generate tweet
     tweet_formatted = preprocess_input_tweet(tweet_text)

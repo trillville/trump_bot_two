@@ -1,3 +1,4 @@
 tensorflow==1.8.0
 keras==2.1.6
 numpy==1.14.3
+twitter==3.4.1
