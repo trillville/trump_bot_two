@@ -78,8 +78,7 @@ def get_new_tweets(conn, api):
             i += 1
         return input_tweet
     else:
-        print("NO NEW TWEETS")
-        sys.exit(1)
+        return None
 
 def main():
     # Connect to Twitter API
@@ -92,6 +91,9 @@ def main():
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     latest_tweet = get_new_tweets(conn, api)
+    if latest_tweet is None:
+        print("NO NEW TWEETS")
+        sys.exit(1)
 
     # Load character dictionaries
     char_indices = json.load(open('char_indices.json'))
