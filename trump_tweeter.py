@@ -29,7 +29,7 @@ def sample(preds, temperature=1.0):
     return np.argmax(probas)
 
 # What is trump gonna say next!
-def generate_output_tweet(seed_tweet, char_indices, indices_char):
+def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
     sentence_trunc = seed_tweet[-MAX_LEN:]
     generated = ''
     next_char = ''
@@ -87,7 +87,7 @@ def main():
 
     # Generate tweet
     tweet_formatted = preprocess_input_tweet(latest_tweet)
-    output_tweet = generate_output_tweet(tweet_formatted, char_indices, indices_char)
+    output_tweet = generate_output_tweet(model, tweet_formatted, char_indices, indices_char)
 
     # Post tweet
     api.PostUpdate(output_tweet)
