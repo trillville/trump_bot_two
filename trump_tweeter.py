@@ -69,7 +69,7 @@ def get_new_tweets(conn, api):
     cur.execute("SELECT max(tweet_id) as tweet_id FROM last_tweet_db")
     last_tweet = cur.fetchone()
     api_tweets = api.GetUserTimeline(screen_name="realDonaldTrump")
-    if last_tweet is not None:
+    if last_tweet[0] is not None:
         if int(last_tweet[0]) == api_tweets[0].id:
             return None
     cur.execute("INSERT INTO last_tweet_db VALUES (%s)", (api_tweets[0].id,))
