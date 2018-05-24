@@ -9,6 +9,7 @@ from keras.models import load_model
 
 NUM_CHARS = 61
 MAX_LEN = 140
+CHARACTER_LIMIT = 279
 
 # Hacky regex... but cleans up the text a little bit
 def preprocess_input_tweet(tweet_text):
@@ -46,9 +47,9 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
 
         generated += next_char
         sentence_trunc = sentence_trunc[1:] + next_char
-        
+
     generated = re.sub("`|~", "", generated)
-    return(generated)
+    return generated[-CHARACTER_LIMIT:]
 
 def get_new_tweets(conn, api):
     cur = conn.cursor()
