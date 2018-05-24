@@ -53,11 +53,11 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
 
 def get_new_tweets(conn, api):
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS last_tweet_db (tweet_id BIGINT);")
-    cur.execute("SELECT tweet_id FROM last_tweet_db")
+    cur.execute("CREATE TABLE IF NOT EXISTS last_tweet_db (tweet_id BIGINT)")
+    cur.execute("SELECT max(tweet_id) as tweet_id FROM last_tweet_db")
     last_tweet = cur.fetchone()
     api_tweets = api.GetUserTimeline(screen_name="realDonaldTrump")
-    if last_tweet is None or last_tweet != api_tweets[0].id:
+    if last_tweet is None or int(last_tweet[0]) != api_tweets[0].id:
         cur.execute("INSERT INTO last_tweet_db VALUES (%s)", (api_tweets[0].id,))
         input_tweet = api_tweets[0].text
         i = 1
