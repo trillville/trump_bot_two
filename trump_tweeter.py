@@ -96,5 +96,4 @@ def main():
     api.PostUpdate(output_tweet)
 
 if __name__ == "__main__":
-    #main(sys.argv[1])
     main()
