@@ -31,8 +31,8 @@ def clean_output_tweet(raw_text):
     return re.sub('`|~', '', raw_text).replace('://', ':/') \
                                        .replace('amp', '&') \
                                        .replace(' : ', get_time(long=True)) \
-                                       .replace('at pm', 'at ' + get_time() + 'pm') \
-                                       .replace('at am', 'at ' + get_time() + 'am')
+                                       .replace('at pm', 'at' + get_time() + 'pm') \
+                                       .replace('at am', 'at' + get_time() + 'am')
 
 # Sample a character, with a given temperature (diversity) parameter
 def sample(preds, temperature=1.0):
@@ -69,9 +69,9 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
 # I removed numbers as possible characters to simplify model - add them back in!
 def get_time(long=False):
     if long is False:
-        return random.choice(POSSIBLE_HOURS)
+        return ' ' + random.choice(POSSIBLE_HOURS)
     else:
-        return random.choice(POSSIBLE_HOURS) + ':' + random.choice(POSSIBLE_MINUTES) + ' '
+        return ' ' + random.choice(POSSIBLE_HOURS) + ':' + random.choice(POSSIBLE_MINUTES) + ' '
 
 def id_or_none(tweet_tuple):
     if tweet_tuple[0] is None:
