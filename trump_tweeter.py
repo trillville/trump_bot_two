@@ -21,7 +21,7 @@ def preprocess_input_tweet(tweet_text):
     t2 = re.sub(r'(?<=[!])(?=[^\s])', r' ', t1)
     t3 = re.sub(r' !', '', t2)
     t4 = re.sub(' +',' ', t3)
-    out = re.sub(r' @ ', '', t4).replace('\n', '').replace('&amp;', '') + '`'
+    out = re.sub(r' @ ', '', t4).replace('\n', '').replace('&amp;', '')
     return out[-MAX_LEN:]
 
 # Sample a character, with a given temperature/diversity parameter
@@ -52,9 +52,9 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
         generated += next_char
         sentence_trunc = sentence_trunc[1:] + next_char
     # Get rid of end of tweet/start of tweet char, and break links so twitter doesnt complain
-    generated = re.sub("`|~", "", generated).replace('://', ':/') \
+    generated = re.sub('`|~', '', generated).replace('://', ':/') \
                                             .replace(' : ', get_time()) \
-                                            .replace("amp", "&")
+                                            .replace('amp', '&')
     if len(generated) >= CHARACTER_LIMIT:
         return split_tweet(generated)
     else:
@@ -68,7 +68,7 @@ def get_time():
 def split_tweet(tweet_text):
     out = []
     while len(tweet_text) >= (CHARACTER_LIMIT - 3):
-        out.append(tweet_text[0:CHARACTER_LIMIT - 3] + "...")
+        out.append(tweet_text[0:CHARACTER_LIMIT - 3] + '...')
         tweet_text = tweet_text[CHARACTER_LIMIT - 3:]
     out.append("..." + tweet_text)
     return out
@@ -87,10 +87,10 @@ def get_new_tweets(conn, api):
     cur.execute("INSERT INTO last_tweet_db VALUES (%s)", (api_tweets[0].id,))
     conn.commit()
     cur.close()
-    input_tweet = api_tweets[0].text
+    input_tweet = '~' + api_tweets[0].text + '`'
     i = 1
     while len(input_tweet) < 200:
-        input_tweet = api_tweets[i].text + input_tweet
+        input_tweet = '~' + api_tweets[i].text + '`' + input_tweet
         i += 1
     return input_tweet
 
@@ -127,5 +127,5 @@ def main():
     for tweet in output_tweets:
         api.PostUpdate(tweet)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
