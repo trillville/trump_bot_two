@@ -5,11 +5,14 @@ import numpy as np
 import twitter
 import os
 import psycopg2
+import random
 from keras.models import load_model
 
 NUM_CHARS = 61
 MAX_LEN = 140
 CHARACTER_LIMIT = 279
+POSSIBLE_HOURS = ['7','8','9']
+POSSIBLE_MINUTES = ['00','15','30','45']
 
 # Hacky regex... but cleans up the text a little bit
 def preprocess_input_tweet(tweet_text):
@@ -49,11 +52,15 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
         sentence_trunc = sentence_trunc[1:] + next_char
 
     # Get rid of end of tweet/start of tweet char, and break links so twitter doesnt complain
-    generated = re.sub("`|~", "", generated).replace('://', ':/')
-    if len(generated) >= CHARACTER_LIMIT - 1:
+    generated = re.sub("`|~", "", generated).replace('://', ':/').replace(' : ', get_time())
+    if len(generated) >= CHARACTER_LIMIT:
         return split_tweet(generated)
     else:
         return [generated]
+
+# I removed numbers from the possible characters to simplify model - add them back in!
+def get_time():
+    return random.choice(POSSIBLE_HOURS) + ':' + random.choice(POSSIBLE_MINUTES) + ' '
 
 def split_tweet(tweet_text):
     out = []
