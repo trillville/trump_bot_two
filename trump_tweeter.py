@@ -71,9 +71,11 @@ def get_new_tweets(conn, api):
     api_tweets = api.GetUserTimeline(screen_name="realDonaldTrump")
     if last_tweet[0] is not None:
         if int(last_tweet[0]) == api_tweets[0].id:
+            cur.close()
             return None
     cur.execute("INSERT INTO last_tweet_db VALUES (%s)", (api_tweets[0].id,))
     conn.commit()
+    cur.close()
     input_tweet = api_tweets[0].text
     i = 1
     while len(input_tweet) < 200:
