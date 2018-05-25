@@ -51,9 +51,10 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
 
         generated += next_char
         sentence_trunc = sentence_trunc[1:] + next_char
-
     # Get rid of end of tweet/start of tweet char, and break links so twitter doesnt complain
-    generated = re.sub("`|~", "", generated).replace('://', ':/').replace(' : ', get_time())
+    generated = re.sub("`|~", "", generated).replace('://', ':/') \
+                                            .replace(' : ', get_time()) \
+                                            .replace("amp", "&")
     if len(generated) >= CHARACTER_LIMIT:
         return split_tweet(generated)
     else:
@@ -104,7 +105,7 @@ def main():
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-    # Latest tweet
+    # Get latest tweet(s)
     latest_tweet = get_new_tweets(conn, api)
     if latest_tweet is None:
         print("NO NEW TWEETS")
