@@ -13,6 +13,7 @@ MAX_LEN = 140
 CHARACTER_LIMIT = 279
 POSSIBLE_HOURS = ['7','8','9']
 POSSIBLE_MINUTES = ['00','15','30','45']
+DIVERSITY_RANGE = [0.15,0.35]
 
 # Hacky regex... but cleans up the text a little bit
 def preprocess_input_tweet(tweet_text):
@@ -37,7 +38,7 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
     sentence_trunc = seed_tweet[-MAX_LEN:]
     generated = ''
     next_char = ''
-    diversity = 0.2
+    diversity = random.uniform(DIVERSITY_RANGE[0], DIVERSITY_RANGE[1])
     print(sentence_trunc)
     while next_char != '`' or len(generated) < 2:
         x_pred = np.zeros((1, MAX_LEN, NUM_CHARS))
@@ -58,10 +59,11 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
     else:
         return [generated]
 
-# I removed numbers from the possible characters to simplify model - add them back in!
+# I removed numbers as possible characters to simplify model - add them back in!
 def get_time():
     return random.choice(POSSIBLE_HOURS) + ':' + random.choice(POSSIBLE_MINUTES) + ' '
 
+# Split tweets longer than 280 characters into smaller tweets, separate with ...
 def split_tweet(tweet_text):
     out = []
     while len(tweet_text) >= (CHARACTER_LIMIT - 3):
@@ -70,6 +72,7 @@ def split_tweet(tweet_text):
     out.append("..." + tweet_text)
     return out
 
+# Check for new tweets!
 def get_new_tweets(conn, api):
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS last_tweet_db (tweet_id BIGINT)")
@@ -100,6 +103,8 @@ def main():
     # Connect to Postgres
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+
+    # Latest tweet
     latest_tweet = get_new_tweets(conn, api)
     if latest_tweet is None:
         print("NO NEW TWEETS")
@@ -109,14 +114,15 @@ def main():
     char_indices = json.load(open('char_indices.json'))
     indices_char = json.load(open('indices_char.json'))
 
-    # Load model
+    # Load model: 2 layer LSTM, 512 units each, dropout = 0.2, RMSprop optimizer
+    # Trained on semi-redundant (5 char stride) 140 character long tweet chunks
     model = load_model('model.h5')
 
-    # Generate tweet
+    # Generate tweet(s)
     tweet_formatted = preprocess_input_tweet(latest_tweet)
     output_tweets = generate_output_tweet(model, tweet_formatted, char_indices, indices_char)
 
-    # Post tweet
+    # Post tweet(s)
     for tweet in output_tweets:
         api.PostUpdate(tweet)
 
