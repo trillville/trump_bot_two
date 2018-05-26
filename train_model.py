@@ -102,7 +102,7 @@ def main():
 
     print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
     model.fit(x, y,
-              batch_size=250,
+              batch_size=BATCH_SIZE,
               epochs=EPOCHS,
               callbacks=[print_callback])
 
