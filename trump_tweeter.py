@@ -142,7 +142,7 @@ def main():
         print('INPUT: ' + input_tweet)
         output_tweets = generate_output_tweet(model, input_tweet, char_indices, indices_char)
         print(output_tweets)
-        for tweet in output_tweets:
+        for tweet in reversed(output_tweets):
             api.PostUpdate(tweet)
 
 if __name__ == '__main__':
