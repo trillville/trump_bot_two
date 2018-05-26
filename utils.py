@@ -29,7 +29,7 @@ def preprocess_input_tweet(tweet_text):
 # Clean up output tweet (have to break URLs so twitter API doesnt complain about fake links)
 def clean_output_tweet(raw_text):
     return re.sub('`|~', '', raw_text).replace('://', ':/') \
-                                       .replace('amp', '&') \
+                                       .replace(' amp ', ' & ') \
                                        .replace(' : ', get_time(long=True)) \
                                        .replace('at pm', 'at' + get_time() + 'pm') \
                                        .replace('at am', 'at' + get_time() + 'am')
