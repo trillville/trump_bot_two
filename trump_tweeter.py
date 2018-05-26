@@ -72,7 +72,7 @@ def main():
     api = twitter.Api(consumer_key=os.environ['CONSUMER_KEY'],
                       consumer_secret=os.environ['CONSUMER_KEY_SECRET'],
                       access_token_key=os.environ['ACCESS_TOKEN'],
-                      access_token_secret=os.environ['ACCESS_TOKEN_SECRET']))
+                      access_token_secret=os.environ['ACCESS_TOKEN_SECRET'])
 
     # Connect to Postgres
     DATABASE_URL = os.environ['DATABASE_URL']
