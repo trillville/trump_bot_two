@@ -3,6 +3,8 @@ import re
 import numpy as np
 
 MODEL_INPUT_LEN = 140
+POSSIBLE_HOURS = ['7','8','9']
+POSSIBLE_MINUTES = ['00','15','30','45']
 
 # I removed numbers as possible characters to simplify model - add them back in!
 def get_time(long=False):
