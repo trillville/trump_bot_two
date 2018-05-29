@@ -1,8 +1,9 @@
 import random
 import re
 import numpy as np
+import nltk
 
-MODEL_INPUT_LEN = 140
+MODEL_INPUT_LEN = 130
 POSSIBLE_HOURS = ['7','8','9']
 POSSIBLE_MINUTES = ['00','15','30','45']
 
@@ -30,11 +31,18 @@ def preprocess_input_tweet(tweet_text):
 
 # Clean up output tweet (have to break URLs so twitter API doesnt complain about fake links)
 def clean_output_tweet(raw_text):
-    return re.sub('`|~', '', raw_text).replace('://', ':/') \
-                                       .replace(' amp ', ' & ') \
-                                       .replace(' : ', get_time(long=True)) \
-                                       .replace('at pm', 'at' + get_time() + 'pm') \
-                                       .replace('at am', 'at' + get_time() + 'am')
+    nltk.download('punkt')
+    sub =  re.sub('`|~', '', raw_text).replace('://', ':/') \
+                                      .replace(' amp ', ' & ') \
+                                      .replace(' : ', get_time(long=True)) \
+                                      .replace('at pm', 'at' + get_time() + 'pm') \
+                                      .replace('at am', 'at' + get_time() + 'am') \
+                                      .replace(' i ', ' I ') \
+                                      .replace('u.s.', 'U.S.')
+    sent_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    sentences = sent_tokenizer.tokenize(sub)
+    sentences = [sent.capitalize() for sent in sentences]
+    return ' '.join(sentences)
 
 # Sample a character, with a given temperature (diversity) parameter
 def sample(preds, temperature=1.0):

@@ -6,21 +6,22 @@ import os
 import psycopg2
 import random
 from keras.models import load_model
-from utils import get_time, id_or_none, preprocess_input_tweet, clean_output_tweet, sample, MODEL_INPUT_LEN
+from utils import get_time, id_or_none, preprocess_input_tweet, clean_output_tweet, sample
 
-NUM_CHARS = 61
+NUM_CHARS = 37
 CHARACTER_LIMIT = 279
-POSSIBLE_HOURS = ['7','8','9']
-POSSIBLE_MINUTES = ['00','15','30','45']
+MODEL_INPUT_LEN = 130
 MIN_TEMP = 0.20
 MAX_TEMP = 0.40
+WORD_TEMP = 0.30
 BASE_SEED_TWEET = '~While in the Philippines I was forced to watch @CNN which I have not done in months and again realized how bad and FAKE it is. Loser!`'
 
 # What is trump gonna say next!
 def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
     sentence_trunc = seed_tweet[-MODEL_INPUT_LEN:]
     generated, next_char = '', ''
-    diversity = random.uniform(MIN_TEMP, MAX_TEMP)
+    diversity = MAX_TEMP
+    word_index = 0
     while (next_char != '`' or len(generated) < 2) and len(generated) < 500:
         x_pred = np.zeros((1, MODEL_INPUT_LEN, NUM_CHARS))
         for t, char in enumerate(sentence_trunc):
@@ -29,6 +30,10 @@ def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
         preds = model.predict(x_pred, verbose=0)[0]
         next_index = sample(preds, diversity)
         next_char = indices_char[str(next_index)]
+        if next_char == ' ':
+            diversity = WORD_TEMP
+        else:
+            diversity = max(MIN_TEMP, diversity - 0.025)
         generated += next_char
         sentence_trunc = sentence_trunc[1:] + next_char
 
@@ -88,12 +93,12 @@ def main():
         sys.exit(1)
 
     # These dictionaries map model predictions <-> characters
-    char_indices = json.load(open('char_indices.json'))
-    indices_char = json.load(open('indices_char.json'))
+    char_indices = json.load(open('char_indices_lower.json'))
+    indices_char = json.load(open('indices_char_lower.json'))
 
     # Load model: 2 layer LSTM, 512 units each, dropout = 0.2, RMSprop optimizer
     # trained on semi-redundant (5 char stride) 140 character long tweet chunks
-    model = load_model('model.h5')
+    model = load_model('trump_model_5 (9)')
 
     # Post tweet(s)
     for input_tweet in latest_tweets:
