@@ -3,7 +3,6 @@ import re
 import numpy as np
 import nltk
 
-MODEL_INPUT_LEN = 130
 POSSIBLE_HOURS = ['7','8','9']
 POSSIBLE_MINUTES = ['00','15','30','45']
 
@@ -26,7 +25,7 @@ def preprocess_input_tweet(tweet_text):
     t2 = re.sub(r'(?<=[!])(?=[^\s])', r' ', t1)
     t3 = re.sub(r' !', '', t2)
     t4 = re.sub(' +',' ', t3)
-    out = re.sub(r' @ ', '', t4).replace('\n', '').replace('&amp;', '')
+    out = re.sub(r' @ ', '', t4).replace('\n', '').replace('&amp;', '').lower()
     return out
 
 # Clean up output tweet (have to break URLs so twitter API doesnt complain about fake links)
