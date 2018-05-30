@@ -14,7 +14,7 @@ MODEL_INPUT_LEN = 130
 MIN_TEMP = 0.20
 MAX_TEMP = 0.40
 WORD_TEMP = 0.30
-BASE_SEED_TWEET = '~While in the Philippines I was forced to watch @CNN which I have not done in months and again realized how bad and FAKE it is. Loser!`'
+BASE_SEED_TWEET = '~While in the Philippines I was forced to watch @CNN which I have not done in months and again realized how bad and FAKE it is. Loser!`'.lower()
 
 # What is trump gonna say next!
 def generate_output_tweet(model, seed_tweet, char_indices, indices_char):
