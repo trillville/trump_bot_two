@@ -98,7 +98,7 @@ def main():
 
     # Load model: 2 layer LSTM, 512 units each, dropout = 0.2, RMSprop optimizer
     # trained on semi-redundant (5 char stride) 140 character long tweet chunks
-    model = load_model('trump_model_5 (9)')
+    model = load_model('trump_model_5.h5')
 
     # Post tweet(s)
     for input_tweet in latest_tweets:
