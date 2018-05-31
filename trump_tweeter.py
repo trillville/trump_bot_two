@@ -52,7 +52,8 @@ def split_tweet(tweet_text):
         tweet_text = tweet_text[CHARACTER_LIMIT - 3:]
     out.append("..." + tweet_text)
     return out
-
+1001912411933364224
+1001912411933364224
 # Check for new tweets!
 def get_new_tweets(cur, api):
     cur.execute("CREATE TABLE IF NOT EXISTS last_tweet_db (tweet_id BIGINT)")
@@ -98,7 +99,7 @@ def main():
 
     # Load model: 2 layer LSTM, 512 units each, dropout = 0.2, RMSprop optimizer
     # trained on semi-redundant (5 char stride) 140 character long tweet chunks
-    model = load_model('trump_model_5.h5')
+    model = load_model('trump_model_6.h5')
 
     # Post tweet(s)
     for input_tweet in latest_tweets:
